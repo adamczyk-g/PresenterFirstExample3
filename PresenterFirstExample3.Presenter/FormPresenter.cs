@@ -30,15 +30,6 @@ namespace PresenterFirstExample3.Presenter
 
         private void OnSubmitButtonClick(object obj, EventArgs e)
         {
-            /*
-            FormData formData = view.FormData;
-            EmailData emailData = view.EmailData;
-            Results results = model.TryEmailFormAsPdf(formData, emailData);
-
-            view.ClearValidationError();
-            view.DisplayValidationResult(results.ValidationResult);
-            view.DisplayEmailError(results.SendingResult);
-            */
             model.EmailFormAsPdf(view.FormData, view.EmailData);
         }
 
