@@ -8,6 +8,6 @@
         }
 
         public string Message { get; private set; }
-        public bool Send { get { return Message == string.Empty; } }
+        public bool WasSend { get { return Message == string.Empty; } }
     }
 }

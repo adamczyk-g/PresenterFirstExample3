@@ -17,17 +17,20 @@ namespace PresenterFirstExample3.Presenter
             this.view = view;
             this.model = model;
 
-            this.view.SubmitButtonClick += OnSubmitButtonClick;
-            view.ViewLoad += OnViewLoad;            
+            view.SubmitButtonClick += OnSubmitButtonClick;
+            view.ViewLoad += OnViewLoad;
+            model.InvalidFormData += OnInvalidFormData;
+            model.SendingErrors += OnSendingErrors;
         }
 
         private void OnViewLoad(object obj, EventArgs e)
         {
-            view.SetDefaultData(model.DefaultFormData);
+            view.SetDefaultData(model.DefaultFormData);            
         }
 
         private void OnSubmitButtonClick(object obj, EventArgs e)
         {
+            /*
             FormData formData = view.FormData;
             EmailData emailData = view.EmailData;
             Results results = model.TryEmailFormAsPdf(formData, emailData);
@@ -35,6 +38,18 @@ namespace PresenterFirstExample3.Presenter
             view.ClearValidationError();
             view.DisplayValidationResult(results.ValidationResult);
             view.DisplayEmailError(results.SendingResult);
+            */
+            model.EmailFormAsPdf(view.FormData, view.EmailData);
+        }
+
+        private void OnInvalidFormData(object sender, EventArgs e)
+        {
+            view.DisplayValidationResult(model.LastFormValidationResult.Messages);
+        }
+
+        private void OnSendingErrors(object sender, EventArgs e)
+        {
+            view.DisplayEmailError(model.EmailSendingError.Message);
         }
     }
 }

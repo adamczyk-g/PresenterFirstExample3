@@ -6,6 +6,11 @@
         //Pdf GeneratePdf(FormData formData);
         //EmailSendingResult EmailFile(EmailData email, Pdf pdf);
         FormData DefaultFormData { get; }
-        Results TryEmailFormAsPdf(FormData formData, EmailData emailData);
+        void EmailFormAsPdf(FormData formData, EmailData emailData);
+        Notification LastFormValidationResult { get; }
+        EmailSendingResult EmailSendingError { get; }
+
+        event System.EventHandler InvalidFormData;
+        event System.EventHandler SendingErrors;
     }
 }

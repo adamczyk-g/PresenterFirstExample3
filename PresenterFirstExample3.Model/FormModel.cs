@@ -16,7 +16,11 @@ namespace PresenterFirstExample3.Model
     public class FormModel : IFormModel
     {
         private readonly IFormValidator formValidator;
+        private Notification validationResult;
+        private EmailSendingResult sendingResult;
 
+        public event EventHandler InvalidFormData;
+        public event EventHandler SendingErrors;
         public FormModel(IFormValidator formValidator)
         {
             this.formValidator = formValidator;
@@ -31,19 +35,25 @@ namespace PresenterFirstExample3.Model
             }
         }
 
-        public Results TryEmailFormAsPdf(FormData formData, EmailData emailData)
+        public void EmailFormAsPdf(FormData formData, EmailData emailData)
         {
-            Notification validationResult = ValidateForm(formData, emailData);
-            EmailSendingResult sendingResult = new EmailSendingResult(string.Empty);
+            validationResult = ValidateForm(formData, emailData);
+            sendingResult = new EmailSendingResult(string.Empty);
 
             if (validationResult.HasErrors == false)
             {
                 Pdf pdf = GeneratePdf(formData);
-                sendingResult = EmailFile(emailData, pdf);
-            }
+                sendingResult = SendFileByEmail(emailData, pdf);
 
-            return new Results(validationResult, sendingResult);
+                if (sendingResult.WasSend == false)
+                    SendingErrors.Invoke(this, EventArgs.Empty);
+            }
+            else
+                InvalidFormData.Invoke(this, EventArgs.Empty);
         }
+
+        public Notification LastFormValidationResult => validationResult;
+        public EmailSendingResult EmailSendingError => sendingResult;
 
         private Notification ValidateForm(FormData formData, EmailData emailData)
         {
@@ -73,7 +83,7 @@ namespace PresenterFirstExample3.Model
             return new Pdf("myDocument.pdf");
         }
 
-        private EmailSendingResult EmailFile(EmailData email, Pdf pdf)
+        private EmailSendingResult SendFileByEmail(EmailData email, Pdf pdf)
         {
             string emailFrom = "notify@mvptest.com.pl";
             string displayName = "PresenterFirst_example_1";
